@@ -92,14 +92,18 @@ async function run() {
             res.send(result);
         })
 
-
-
-
-
-
-
-
-
+        app.patch('/classes/pending/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: new ObjectId(id) }
+            const updateDoc = {
+                $set: {
+                    role: 'pending'
+                }
+            }
+            const result = await ClassesCollection.updateOne(query, updateDoc);
+            res.send(result);
+        })
 
 
         // User Apis
