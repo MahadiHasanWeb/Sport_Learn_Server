@@ -28,6 +28,13 @@ async function run() {
         // await client.connect();
         const SportLearnUsersCollection = client.db('SportLearn').collection('users');
 
+        app.post('/jwt', (req, res) => {
+            const user = req.body;
+            const token = jwt.sign(user, process.env.Access_Token, {
+                expiresIn: '1h'
+            })
+            res.send(token)
+        })
 
         // User Apis
 
