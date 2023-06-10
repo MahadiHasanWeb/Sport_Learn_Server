@@ -68,7 +68,6 @@ async function run() {
 
         app.patch('/classes/approved/:id', async (req, res) => {
             const id = req.params.id;
-            console.log(id)
             const query = { _id: new ObjectId(id) }
             const updateDoc = {
                 $set: {
@@ -81,7 +80,6 @@ async function run() {
 
         app.patch('/classes/denied/:id', async (req, res) => {
             const id = req.params.id;
-            console.log(id)
             const query = { _id: new ObjectId(id) }
             const updateDoc = {
                 $set: {
@@ -94,7 +92,6 @@ async function run() {
 
         app.patch('/classes/pending/:id', async (req, res) => {
             const id = req.params.id;
-            console.log(id)
             const query = { _id: new ObjectId(id) }
             const updateDoc = {
                 $set: {
@@ -104,6 +101,30 @@ async function run() {
             const result = await ClassesCollection.updateOne(query, updateDoc);
             res.send(result);
         })
+
+        app.patch('/classes/feedback/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const feedback = req.body.feedback; // Access the feedback value
+            console.log(feedback);
+
+            const query = { _id: new ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    feedback: feedback
+                }
+            };
+            const result = await ClassesCollection.updateOne(query, updateDoc);
+            res.send(result);
+        });
+
+
+
+
+
+
+
+
 
 
         // User Apis
@@ -127,7 +148,6 @@ async function run() {
 
         app.patch('/users/admin/:id', async (req, res) => {
             const id = req.params.id;
-            console.log(id)
             const query = { _id: new ObjectId(id) }
             const updateDoc = {
                 $set: {
@@ -141,7 +161,6 @@ async function run() {
 
         app.patch('/users/Instructor/:id', async (req, res) => {
             const id = req.params.id;
-            console.log(id)
             const query = { _id: new ObjectId(id) }
             const updateDoc = {
                 $set: {
