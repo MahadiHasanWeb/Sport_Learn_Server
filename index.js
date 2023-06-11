@@ -44,6 +44,7 @@ async function run() {
         // await client.connect();
         const SportLearnUsersCollection = client.db('SportLearn').collection('users');
         const ClassesCollection = client.db('SportLearn').collection('classes');
+        const SelectedClassesCollection = client.db('SportLearn').collection('selected');
 
         app.post('/jwt', (req, res) => {
             const user = req.body;
@@ -52,8 +53,6 @@ async function run() {
             })
             res.send({ token })
         })
-
-
 
         app.get('/classes', async (req, res) => {
             const result = await ClassesCollection.find().toArray();
@@ -159,7 +158,38 @@ async function run() {
 
 
 
+        // Selected class
 
+        app.get('/selectedClass', verifyJWT, async (req, res) => {
+            const email = req.query.email;
+
+            if (!email) {
+                res.send([]);
+            }
+
+            const decodedEmail = req.decoded.email;
+            if (email !== decodedEmail) {
+                return res.status(403).send({ error: true, message: 'forbidden access' })
+            }
+
+            const query = { email: email };
+            const result = await SelectedClassesCollection.find(query).toArray();
+            res.send(result);
+        });
+
+
+        app.post('/selectedClass', async (req, res) => {
+            const item = req.body;
+            const query = { classId: item.classId }
+            // console.log(query)
+            const existingItem = await SelectedClassesCollection.findOne(query);
+            // console.log(existingItem)
+            if (existingItem) {
+                return res.send({ message: 'class already enroll' })
+            }
+            const result = await SelectedClassesCollection.insertOne(item);
+            res.send(result);
+        })
 
 
 
