@@ -135,10 +135,46 @@ async function run() {
 
         // User Apis
 
-        app.get('/users', verifyJWT, async (req, res) => {
+        app.get('/users', async (req, res) => {
             const result = await SportLearnUsersCollection.find().toArray();
             res.send(result);
         })
+
+
+        app.get('/users/admin/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            if (req.decoded.email !== email) {
+                res.send({ admin: false })
+            }
+            const query = { email: email }
+            const user = await SportLearnUsersCollection.findOne(query);
+            const result = { admin: user?.role === 'admin' }
+            res.send(result);
+        })
+
+        app.get('/users/Instructor/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            if (req.decoded.email !== email) {
+                res.send({ Instructor: false })
+            }
+            const query = { email: email }
+            const user = await SportLearnUsersCollection.findOne(query);
+            const result = { Instructor: user?.role === 'Instructor' }
+            res.send(result);
+        })
+
+        app.get('/users/student/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            if (req.decoded.email !== email) {
+                res.send({ student: false })
+            }
+            const query = { email: email }
+            const user = await SportLearnUsersCollection.findOne(query);
+            const result = { student: !user || !user.role };
+            res.send(result);
+        })
+
+
 
         app.post('/users', async (req, res) => {
             const user = req.body;
