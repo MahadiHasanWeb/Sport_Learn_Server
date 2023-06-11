@@ -66,6 +66,39 @@ async function run() {
             res.send(classes)
         })
 
+
+        app.get('/myClasses/update/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: new ObjectId(id) }
+            const classes = await ClassesCollection.findOne(query)
+            console.log(classes)
+            res.send(classes)
+        })
+
+
+        app.put('/myClasses/update/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedData = req.body;
+            console.log(updatedData)
+            const filter = { _id: new ObjectId(id) }
+            const option = { upsert: true }
+            const Updated = {
+                $set: {
+                    availableSeats: updatedData.availableSeats,
+                    className: updatedData.className,
+                    instructorEmail: updatedData.instructorEmail,
+                    instructorName: updatedData.instructorName,
+                    price: updatedData.price,
+                    ClassImage: updatedData.ClassImage,
+                    role: updatedData.role
+                }
+            }
+            const result = await ClassesCollection.updateOne(filter, Updated, option);
+            res.send(result);
+        })
+
+
         app.post('/classes', async (req, res) => {
             const classes = req.body;
             const result = await ClassesCollection.insertOne(classes);
