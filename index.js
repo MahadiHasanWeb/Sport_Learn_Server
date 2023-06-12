@@ -96,13 +96,13 @@ async function run() {
             const payment = req.body;
             const insertResult = await PaymentClassesCollection.insertOne(payment);
 
-            // const classId = payment.classId;
-            // const filter = { _id: new ObjectId(classId) }
+            const classId = payment.classId;
+            const filter = { _id: new ObjectId(classId) }
 
-            // const updateDoc = {
-            //     $inc: { availableSeats: -1 }
-            // }
-            // const updatedSeats = await ClassesCollection.updateOne(filter, updateDoc);
+            const updateDoc = {
+                $inc: { availableSeats: -1, Enrolled: +1 }
+            }
+            const updatedSeats = await ClassesCollection.updateOne(filter, updateDoc);
 
 
             const id = payment.selectedId;
@@ -110,7 +110,7 @@ async function run() {
             const deleted = await SelectedClassesCollection.deleteOne(query)
 
 
-            res.send({ insertResult, /* updatedSeats, */ deleted });
+            res.send({ insertResult, updatedSeats, deleted });
         })
 
 
