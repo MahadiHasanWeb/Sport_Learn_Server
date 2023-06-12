@@ -59,6 +59,23 @@ async function run() {
 
 
 
+        app.get('/payments', verifyJWT, async (req, res) => {
+            const email = req.query.email;
+
+            if (!email) {
+                res.send([]);
+            }
+
+            const decodedEmail = req.decoded.email;
+            if (email !== decodedEmail) {
+                return res.status(403).send({ error: true, message: 'forbidden access' })
+            }
+
+            const query = { email: email };
+            const result = await PaymentClassesCollection.find(query).toArray();
+            res.send(result);
+        });
+
 
         app.post('/create-payment-intent', verifyJWT, async (req, res) => {
             const { price } = req.body;
@@ -74,6 +91,31 @@ async function run() {
             })
         })
 
+
+        app.post('/payments', verifyJWT, async (req, res) => {
+            const payment = req.body;
+            const insertResult = await PaymentClassesCollection.insertOne(payment);
+
+            // const classId = payment.classId;
+            // const filter = { _id: new ObjectId(classId) }
+
+            // const updateDoc = {
+            //     $inc: { availableSeats: -1 }
+            // }
+            // const updatedSeats = await ClassesCollection.updateOne(filter, updateDoc);
+
+
+            const id = payment.selectedId;
+            const query = { _id: new ObjectId(id) }
+            const deleted = await SelectedClassesCollection.deleteOne(query)
+
+
+            res.send({ insertResult, /* updatedSeats, */ deleted });
+        })
+
+
+
+        // Class api
 
         app.get('/classes', async (req, res) => {
             const result = await ClassesCollection.find().toArray();
@@ -128,6 +170,7 @@ async function run() {
         app.patch('/classes/approved/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
+            console.log(query)
             const updateDoc = {
                 $set: {
                     role: 'approved'
