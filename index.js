@@ -123,7 +123,6 @@ async function run() {
         })
 
         app.get('/classes/:email', async (req, res) => {
-            // console.log(req.params.email)
             const classes = await ClassesCollection.find({ instructorEmail: req.params.email }).toArray();
             res.send(classes)
         })
@@ -244,7 +243,7 @@ async function run() {
 
         app.post('/selectedClass', async (req, res) => {
             const item = req.body;
-            const query = { classId: item.classId }
+            const query = { classId: item.classId, email: item.email }
             // console.log(query)
             const existingItem = await SelectedClassesCollection.findOne(query);
             // console.log(existingItem)
